@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="icon" type="/image/png" href="/images/hybridcloud.png">
+    <link rel="stylesheet" href="/css/home.css">
+    <title>Order Quote Engraving</title>
+
+    <script defer src="/js/jquery-3.3.1.min.js"></script>
+    <script defer src="/js/bootstrap.min.js"></script>
+
+ 
+    <!-- Darmode widget -->
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script>
+      function addDarkmodeWidget() {
+        new Darkmode().showWidget();
+      }
+      window.addEventListener('load', addDarkmodeWidget);
+    </script>
+    
+    <% if( typeof INSTANA_HEADER != 'undefined' && INSTANA_HEADER != null ) { %>
+        <%- INSTANA_HEADER %>
+        <script>
+            ineum('page',"<%=pageid%>")
+            ineum('meta', "appVersion", "<%=localSession.appVersion%>")
+            ineum('meta', "buildInfo", "<%=localSession.buildInfo%>")
+            ineum('meta', "appName", "<%=localSession.appName%>")
+            ineum('meta', "requestToken", "<%=localSession.token%>" )
+            ineum('user', "<%=localSession.user.userId%>", "<%=localSession.user.userName%>", "<%=localSession.user.email%>" )
+        </script>
+    
+    <% } %>
+
+</head>
+
+<body>
+
+    <main role="main">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <a id="linkHome" href="/"><button class="btn btn-outline-dark float-left">Home</button></a>
+            </div>
+        </div>
+
+        <div class="row" style="padding-top: 2em;">
+            <div class="col-1">
+            </div>
+            <div class="col-8">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="inputDedication">Dedication</label>
+                            <input type="text" class="form-control" id="inputDedication" value="<%=order.dedication%>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputStreetAddress">Address</label>
+                        <input type="text" class="form-control" id="inputStreetAddress" value="<%=order.street%>">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label for="inputCity">City</label>
+                            <input type="text" class="form-control" id="inputCity" value="<%=order.city%>">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputState">State</label>
+                            <input type="text" id="inputState" class="form-control" value="<%=order.state%>">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="inputZip">Zip</label>
+                            <input type="text" class="form-control" id="inputZip" value="<%=order.zip%>">
+                        </div>
+                    </div>
+                </form>
+                <button id="btnOrderEngraving" class="btn btn-primary" onclick="order()">Order Engraving</button>
+                <button id="btnCancel" class="btn btn-outline-danger" onclick="cancel()">Cancel</button>
+        </div>
+            <div class="col-3">
+            </div>
+        </div>
+
+    </div>
+
+    <div id="OrderInfoDialog" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Order Information</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="confirmed()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="orderInformation"></p>
+            </div>
+            <div class="modal-footer">
+              <button id="btnCloseOrderInformationDialog" type="button" class="btn btn-secondary" data-dismiss="modal" onclick="confirmed()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% if( typeof branding != 'undefined'  && branding != null ) { %>
+        <div class="container">
+            <hr/>
+            <p><%-branding%></p>
+        </div>
+        <% } %>
+
+    </main>
+
+
+    <script>
+
+        function order(){
+            var dedication = $('#inputDedication').val();
+            var street = $('#inputStreetAddress').val();
+            var city = $('#inputCity').val();
+            var state = $('#inputState').val();
+            var zip = $('#inputZip').val();
+
+            var order = {
+                "orderNo": "C<%=order.token%>",
+                "dedication": dedication,
+                "street": street,
+                "city": city,
+                "state": state,
+                "zip": zip,
+                "quote_id": "<%=order.quote_id%>"
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/order?requestToken=<%=order.token%>',
+                contentType: 'application/json',
+                data: JSON.stringify(order), 
+                success: confirmOrder,
+                error: function(errMsg) {
+                    alert(JSON.stringify(errMsg,null,4));
+                }
+            });
+
+        }
+
+        function confirmOrder(data){
+            $('#orderInformation').html("Order sucessfully placed.");
+            $('#OrderInfoDialog').modal("show");
+        }
+
+        function confirmed(){
+            window.location.href = "/";
+        }
+
+        function cancel(){
+            window.location.href = "/";
+        }
+
+    </script>
+
+</body>
+
+</html>

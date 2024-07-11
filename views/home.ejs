@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="icon" type="/image/png" href="/images/hybridcloud.png">
+    <link rel="stylesheet" href="/css/home.css">
+
+    <!-- Darmode widget -->
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+    <script>
+      function addDarkmodeWidget() {
+        new Darkmode().showWidget();
+      }
+      window.addEventListener('load', addDarkmodeWidget);
+    </script>
+
+    <title>Quote of the Day</title>
+
+    <% if( typeof INSTANA_HEADER != 'undefined' && INSTANA_HEADER != null ) { %>
+        <%- INSTANA_HEADER %>
+        <script>
+            ineum('page',"<%=pageid%>")
+            ineum('meta', "appVersion", "<%=localSession.appVersion%>")
+            ineum('meta', "buildInfo", "<%=localSession.buildInfo%>")
+            ineum('meta', "appName", "<%=localSession.appName%>")
+            ineum('meta', "requestToken", "<%=localSession.token%>" )
+            ineum('user', "<%=localSession.user.userId%>", "<%=localSession.user.userName%>", "<%=localSession.user.email%>" )
+        </script>
+    
+    <% } %>
+
+</head>
+
+<body>
+
+    <main role="main">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a id="home_link" href="/"><button id="btnHome" class="btn btn-outline-dark float-left">Home</button></a>
+                    <a id="random_link" href="/random"><button id="btnRandom" class="btn btn-outline-dark float-right">Random
+                            Quote</button></a>
+                </div>
+            </div>
+        </div>
+
+
+        <section class="jumbotron text-center">
+            <div class="container">
+                <h1 class="jumbotron-heading">
+                    <%= quoteDetails.title %>
+                </h1>
+                <h5>
+                    <%= quoteDetails.today %>
+                </h5>
+                <p class="lead text-muted">
+                    <i id="quote">
+                        <%=quoteDetails.quote%>
+                    </i>
+                </p>
+                <p>- <a id="author_link" href="/author/<%=quoteDetails.author_id%>">
+                        <%=quoteDetails.author%>
+                    </a></p>
+                <p>[<%=quoteDetails.genre%>]</p>
+                <p>
+                    <% if( !Number.isInteger(quoteDetails.rating) ) { %>
+                        (Rating service not currently available)
+                    <% } else { %>
+                        <img id="ratingImg" src="/images/<%=quoteDetails.rating%>star.png">
+                    <% } %>
+                </p>
+            </div>
+        </section>
+
+        <div class="row" style="padding-top: 100px;">
+            <div class="container" style="text-align: left;">
+                <a id="pdf_link" href="/pdf/<%=quoteDetails.id%>"><button id="btnPDF" class="btn btn-outline-dark">PDF &nbsp; <img src="/images/pdf.png" width="16"></button></a>
+                <% if( typeof quoteDetails.enableQR != 'undefined' && quoteDetails.enableQR ) { %>
+                    <a id="qrcode_link" href="/qrcode/<%=quoteDetails.id%>" style="text-align: right;"><button id="btnQrCode" class="btn btn-outline-dark float-left">QR Code  &nbsp; <img src="/images/qrcode.png" width="20"></button></a>
+    
+                <% } %>
+            <% if( typeof quoteDetails.enableOrdering != 'undefined' && quoteDetails.enableOrdering ) { %>
+                <a id="order_link" href="/order/<%=quoteDetails.id%>" style="text-align: right;"><button id="btnOrder" class="btn btn-outline-dark float-right">Order Engraving</button></a>
+
+            <% } %>
+            </div>
+        </div>
+
+        <% if( typeof branding != 'undefined'  && branding != null ) { %>
+            <div class="container">
+                <hr/>
+                <p><%-branding%></p>
+            </div>
+        <% } %>
+
+    </main>
+
+
+</body>
+
+</html>
